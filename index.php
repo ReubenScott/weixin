@@ -5,7 +5,7 @@
 
 //define your token
 define("TOKEN", "weixin");
-$wechatObj = new wechatCallbackapiTest();
+$wechatObj = new wechatCallbackapi();
 
 if (!isset($_GET['echostr'])) {
   $wechatObj->responseMsg();
@@ -13,7 +13,7 @@ if (!isset($_GET['echostr'])) {
   $wechatObj->valid();
 }
 
-class wechatCallbackapiTest {
+class wechatCallbackapi {
   
   public function valid() {
     $echoStr = $_GET["echostr"]; //随机字符串
@@ -61,9 +61,9 @@ class wechatCallbackapiTest {
           } else if(strcmp($content, "？") == 0 ){
             $result = $this->transmitText($postObj,$this->getMainMenu());
           } else {
-            $result = $this->transmitText($postObj,$content);
-          }
-          
+//            $result = $this->transmitText($postObj,$content);
+            $result = $this->transmitText($postObj,$this->getMainMenu());
+          }          
           break;
       }
       echo $result;
@@ -90,16 +90,11 @@ class wechatCallbackapiTest {
    */
   private function getMainMenu() {
     $menu = "您好，欢迎关注理好财。请回复数字选择服务：\n\n";
-    $menu .= "1  天气预报\n";
-    $menu .= "2  公交查询\n";
-    $menu .= "3  周边搜索\n";
-    $menu .= "4  歌曲点播\n";
-    $menu .= "5  经典游戏\n";
-    $menu .= "6  美女电台\n";
-    $menu .= "7  人脸识别\n";
-    $menu .= "8  聊天唠嗑\n";
-    $menu .= "\n回复\"?\"显示此帮助菜单";
+    $menu .= "1  上证指数\n";
+    $menu .= "2  财经新闻\n";
     $menu .=  "\n\n详情查看  www.loveslicai.com";
+    $menu .= "\n招商热线 18061801686";
+    $menu .= "\n微信开发 15221891086";
     return $menu;
   }
   
