@@ -1,0 +1,62 @@
+<?php
+
+
+//xmlrpc_client.php
+//XML-RPC客户端演示程序
+require_once(ROOT.'includes/xmlrpc.inc');
+
+//创建client对象, 三个参数依次为 path, hostname, port  
+$s= new xmlrpc_client('/xmlrpc.php', 'www.loveslicai.com', 80);
+
+//create xmlrpcval object, which allows the encoding of our variable
+//创建xmlrpcval对象，将我们的PHP变量编码为XML-RPC需要的XML形式
+$inputString=new xmlrpcval('world', 'string');
+
+$parameters = array(
+         new xmlrpcval(1234 ),
+         new xmlrpcval("ABCDEFHIJ"),
+         new xmlrpcval(1)
+       ) ;
+
+//create an array of parameters
+//尽管我们只有一个参数，但仍然要转换成数组的形式，因为xmlrpcmsg的第二个参数是一个参数表
+//$parameters=array($inputString);
+
+//create the message object
+//创建XML-RPC报文，参数分别为 远程方法名 和 参数表
+//$msg=new xmlrpcmsg('stock.hello', $parameters);
+$msg=new xmlrpcmsg('stock.search_stock', $parameters);
+
+//send the message, get the response
+//发送报文，返回值$rsp为一个xmlrpcresp对象，它包含以下三个方法：
+//faultCode() 出错代码，如果成功将返回0
+//faultString() 出错信息
+//value() 返回值，以xmlrpcval对象形式存在，PHP使用前需要进行解码
+$rsp=$s->send($msg);
+
+//check for errors
+if($rsp->faultcode()==0) {
+  //decode the response to a PHP type
+  //xmlrpc_decode()函数用于将xmlrpcval对象解码
+  $response = php_xmlrpc_decode($rsp->value());
+  
+  //print results
+  return $response;
+} else {
+  //print errors
+  print 'Error: '.$rsp->faultcode().', '.$rsp->faultstring().'';
+}
+
+//print "<h3>Testing request serialization</h3>\n";
+//$op = $msg->serialize();
+//print "<PRE>" . htmlentities($op) . "</PRE>";
+
+//show messages
+//然后我们来查看一下报文内容
+//$msg->createpayload();
+//print 'REQUEST:</font><font color="#007700">.</font><font color="#0000bb">'.$msg.'</font>
+//  <font color="#007700">-></font><font color="#0000bb">payload</font><font color="#007700">.</font><font color="#dd0000">';
+//
+//print 'RESPONSE:</font><font color="#007700">.</font><font color="#0000bb">'.$rsp.'</font>
+//      <font color="#007700">-></font><font color="#0000bb">serialize</font><font color="#007700">().</font><font color="#dd0000">';
+
