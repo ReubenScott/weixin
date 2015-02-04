@@ -5,6 +5,8 @@
     CopyRight 2014 All Rights Reserved
 */
 
+ini_set('date.timezone','Asia/Shanghai');
+
 //定义应用的根目录！（这个不是系统的根目录）本程序将应用目录限制在独立应用下
 define("ROOT",str_replace("\\","/",dirname(__FILE__))."/");
 
@@ -50,7 +52,8 @@ class wechatCallbackapi {
   public function responseMsg(){
     $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
     if (!empty($postStr)){
-      $this->logger("R ".$postStr);
+      $this->logger($postStr);
+//      $this->logger("R ".$postStr);
       $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
       $RX_TYPE = trim($postObj->MsgType);
 
@@ -80,7 +83,8 @@ class wechatCallbackapi {
             $result = "unknown msg type: ".$RX_TYPE;
             break;
       }
-      $this->logger("T ".$result);
+//      $this->logger("T ".$result);
+      $this->logger($result);
       echo $result;
     }else {
       echo "";
@@ -378,7 +382,8 @@ class wechatCallbackapi {
       if(file_exists($log_filename) and (abs(filesize($log_filename)) > $max_size)){
         unlink($log_filename);
       }
-      file_put_contents($log_filename, date('H:i:s')." ".$log_content."\r\n", FILE_APPEND);
+      file_put_contents($log_filename, $log_content."\r\n", FILE_APPEND);
+//      file_put_contents($log_filename, date('H:i:s')." ".$log_content."\r\n", FILE_APPEND);
     }
   }
 }
