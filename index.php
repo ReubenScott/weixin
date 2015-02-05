@@ -10,6 +10,9 @@ ini_set('date.timezone','Asia/Shanghai');
 //定义应用的根目录！（这个不是系统的根目录）本程序将应用目录限制在独立应用下
 define("ROOT",str_replace("\\","/",dirname(__FILE__))."/");
 
+include ROOT."modules/news/news.module" ;
+
+
 //define your token
 define("TOKEN", "weixin");
 $wechatObj = new wechatCallbackapi();
@@ -97,12 +100,12 @@ class wechatCallbackapi {
     $content = "";
     switch ($object->Event)    {
       case "subscribe":
-        $title = "欢迎关注理好财 ";
-        $title .= (!empty($object->EventKey))?("\n来自二维码场景 ".str_replace("qrscene_","",$object->EventKey)):"";
+        $title = "欢迎关注理好财";
+//        $title .= (!empty($object->EventKey))?("\n来自二维码场景 ".str_replace("qrscene_","",$object->EventKey)):"";
         
         $content[] = array(
           "Title"=> $title,  
-          "Description"=>"你不理财，财不理你", 
+          "Description"=> $this->getMainMenu(), 
           "PicUrl"=>"http://cqcbepaper.cqnews.net/cqcb/res/1/20110525/95291306272655343.jpg", 
           "Url" =>"http://www.loveslicai.com"
         );
@@ -145,11 +148,20 @@ class wechatCallbackapi {
 
   //接收文本消息
   private function receiveText($object) {
-    switch ($object->Content)      {
-      case "文本":
-        $content = "这是个文本消息";
+    
+    switch (trim($object->Content)){
+      case "1":
+        $content[] = array( 
+          'Title' => '上证指数', 
+          'Description' => '上证指数', 
+          'PicUrl' => 'http://image.sinajs.cn/newchart/min/n/sh000001.gif',
+          'Url' => 'http://www.loveslicai.com/stock'
+        ); 
         break;
-      case "图文":
+      case "2":
+        $news = new News;
+        $content = $news->get_news();
+        break;
       case "单图文":
         $content = array();
         $content[] = array("Title"=>"单图文标题",  "Description"=>"单图文内容", "PicUrl"=>"http://discuz.comli.com/weixin/weather/icon/cartoon.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
@@ -356,7 +368,7 @@ class wechatCallbackapi {
    * 帮助菜单
    */
   private function getMainMenu() {
-    $menu = "您好，欢迎关注理好财。请回复数字选择服务：\n\n";
+    $menu = "请回复数字选择服务：\n\n";
     $menu .= "1  上证指数\n";
     $menu .= "2  财经新闻\n";
     $menu .=  "\n\n详情查看  www.loveslicai.com";
@@ -366,6 +378,7 @@ class wechatCallbackapi {
     
     return $menu;
   }
+  
   
 
   //日志记录
