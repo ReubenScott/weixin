@@ -14,7 +14,7 @@ if(file_exists($token)){
   //存储配置信息
   $content = file_get_contents($token);
   //查找替换
-  $content = preg_replace('/\$access_token\s*=\s*[\'|"][a-zA-Z0-9\-\_]*[\'|"];/isU','$access_token = "'.$wechat->access_token().'";',$content);
+  $content = preg_replace('/\$access_token\s*=\s*[\'|"][a-zA-Z0-9\-\_]*[\'|"];/isU','$access_token = "'.$wechat->refresh_access_token().'";',$content);
 
   if(fwrite($fopen,$content)){
     echo '更新token成功';

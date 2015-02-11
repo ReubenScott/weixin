@@ -146,7 +146,7 @@ class WeChat {
    * access_token的有效期目前为2个小时，需定时刷新，重复获取将导致上次获取的access_token失效。
    * 
    */
-  public function access_token() {
+  public function refresh_access_token() {
     $url = sprintf('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&APPID=%s&secret=%s', $this->appid, $this->appsecret);
     
     $header[] = "Content-type: text/xml";
