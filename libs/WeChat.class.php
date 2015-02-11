@@ -167,6 +167,8 @@ class WeChat {
     if ($curl_errno > 0) {
       //TODO log error
       echo "CURL Error ($curl_errno) :  $curl_error";
+      
+      exit;
     }
     
     $resp = json_decode($result);
