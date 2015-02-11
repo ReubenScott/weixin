@@ -6,15 +6,21 @@
 
 include_once('libs/WeChat.class.php');
 $wechat = new WeChat;
+$access_token = $wechat->refresh_access_token() ;
 
-$token = 'token.php';
+$token_file = 'token.php';
 
-if(file_exists($token)){
-  $fopen = fopen($token,'r+') or exit($token." 没有读写权限！");
+if(file_exists($token_file)){
+  $fopen = fopen($token_file,'r+') or exit($token_file." 没有读写权限！");
   //存储配置信息
-  $content = file_get_contents($token);
+  $content = file_get_contents($token_file);
   //查找替换
-  $content = preg_replace('/\$access_token\s*=\s*[\'|"][a-zA-Z0-9\-\_]*[\'|"];/isU','$access_token = "'.$wechat->refresh_access_token().'";',$content);
+  $content = preg_replace('/\$access_token\s*=\s*[\'|"][a-zA-Z0-9\-\_]*[\'|"];/isU','$access_token = "'.$access_token.'";',$content);
+
+  // 正则去除'//'和'/* */'注释
+  $content = preg_replace("/(\/{2,}.*?$)|(\/\*(\n|.)*?\*\/)/isU" ,'',$content);
+
+  $content .= "//" .$access_token ;
 
   if(fwrite($fopen,$content)){
     echo '更新token成功';
@@ -23,8 +29,11 @@ if(file_exists($token)){
   }
   fclose($fopen);
 } else {
-  $fopen = fopen($token,'w+') or exit("Unable to connect 2");
-  if( fwrite($fopen,$str)) {
+  $fopen = fopen($token_file,'w+') or exit("创建 ".$token_file." 失败！");
+  
+  $content = " <?php \r\n \$access_token = '".$access_token . "';" ;
+  
+  if(fwrite($fopen,$content)) {
     echo '文件写入成功';
   }
   fclose($fopen);
