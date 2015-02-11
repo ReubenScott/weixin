@@ -600,7 +600,7 @@
 					else
 					{
 						/// @todo this needs to treat correctly php-serialized objects,
-						/// since std deserializing is done by php_xmlrpc_decode,
+						/// since std deserializing is done by xmlrpc_decode,
 						/// which we will not be calling...
 						if (isset($GLOBALS['_xh']['php_class']))
 						{
@@ -3252,7 +3252,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 	* @param array $options if 'decode_php_objs' is set in the options array, xmlrpc structs can be decoded into php objects
 	* @return mixed
 	*/
-	function php_xmlrpc_decode($xmlrpc_val, $options=array())
+	function xmlrpc_decode($xmlrpc_val, $options=array())
 	{
 		switch($xmlrpc_val->kindOf())
 		{
@@ -3282,7 +3282,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 				$arr = array();
 				for($i = 0; $i < $size; $i++)
 				{
-					$arr[] = php_xmlrpc_decode($xmlrpc_val->arraymem($i), $options);
+					$arr[] = xmlrpc_decode($xmlrpc_val->arraymem($i), $options);
 				}
 				return $arr;
 			case 'struct':
@@ -3297,7 +3297,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 					$obj = @new $xmlrpc_val->_php_class;
 					while(list($key,$value)=$xmlrpc_val->structeach())
 					{
-						$obj->$key = php_xmlrpc_decode($value, $options);
+						$obj->$key = xmlrpc_decode($value, $options);
 					}
 					return $obj;
 				}
@@ -3306,7 +3306,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 					$arr = array();
 					while(list($key,$value)=$xmlrpc_val->structeach())
 					{
-						$arr[$key] = php_xmlrpc_decode($value, $options);
+						$arr[$key] = xmlrpc_decode($value, $options);
 					}
 					return $arr;
 				}
@@ -3315,7 +3315,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 				$arr = array();
 				for($i = 0; $i < $paramcount; $i++)
 				{
-					$arr[] = php_xmlrpc_decode($xmlrpc_val->getParam($i));
+					$arr[] = xmlrpc_decode($xmlrpc_val->getParam($i));
 				}
 				return $arr;
 			}
@@ -3342,7 +3342,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 	*
 	* If given a proper options parameter, php object instances will be encoded
 	* into 'special' xmlrpc values, that can later be decoded into php objects
-	* by calling php_xmlrpc_decode() with a corresponding option
+	* by calling xmlrpc_decode() with a corresponding option
 	*
 	* @author Dan Libby (dan@libby.com)
 	*
@@ -3462,7 +3462,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 	* @param array $options
 	* @return mixed false on error, or an instance of either xmlrpcval, xmlrpcmsg or xmlrpcresp
 	*/
-	function php_xmlrpc_decode_xml($xml_val, $options=array())
+	function xmlrpc_decode_xml($xml_val, $options=array())
 	{
 		$GLOBALS['_xh'] = array();
 		$GLOBALS['_xh']['ac'] = '';
