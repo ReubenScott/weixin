@@ -23,10 +23,12 @@
 
 class WeChat {
   
-	var $appid = "";
-	var $appsecret = "";
-
-    //构造函数，获取Access Token
+	var $appid = "wx237fb313f82e673b";
+	var $appsecret = "917496aa5d1fb9df783b1f979e5dce8b";
+	
+	
+	
+  //构造函数，获取Access Token
 	public function __construct($appid = NULL, $appsecret = NULL){
     if($appid){
       $this->appid = $appid;
@@ -48,6 +50,10 @@ class WeChat {
       $this->lasttime = time();
     }
 	}
+	
+  function is_wechat_browser() {
+    return preg_match('/ MicroMessenger\//', $_SERVER['HTTP_USER_AGENT']);
+  }
 
   //获取关注者列表
 	public function get_user_list($next_openid = NULL) {
@@ -130,6 +136,43 @@ class WeChat {
     $result = json_decode($res, true);
     return $result["result"]["addressComponent"];
   }
+  
+  
+  /**
+   * 获取Access Token
+   * 
+   * access_token是公众号的全局唯一票据，公众号调用各接口时都需使用access_token。
+   * 开发者需要进行妥善保存。access_token的存储至少要保留512个字符空间。
+   * access_token的有效期目前为2个小时，需定时刷新，重复获取将导致上次获取的access_token失效。
+   * 
+   */
+  public function access_token() {
+    $url = sprintf('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&APPID=%s&secret=%s', $this->appid, $this->appsecret);
+    
+    $header[] = "Content-type: text/xml";
+  //  $header[] = "Content-length: ".strlen($request);
+    
+    $curl = curl_init();   
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 1);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+  //  curl_setopt($curl, CURLOPT_POSTFIELDS, $request);
+    
+    $result = curl_exec($curl);
+    $curl_errno = curl_errno($curl);
+    $curl_error = curl_error($curl);
+    curl_close($curl);
+    
+    if ($curl_errno > 0) {
+      //TODO log error
+      echo "CURL Error ($curl_errno) :  $curl_error";
+    }
+    
+    $resp = json_decode($result);
+    
+    return $resp->access_token ;
+  }
 
   //https请求（支持GET和POST）
   protected function https_request($url, $data = null) {
@@ -146,5 +189,8 @@ class WeChat {
     curl_close($curl);
     return $output;
   }
+  
+  
+  
 }
 
