@@ -7,32 +7,13 @@
 
 class WeChat {
 
-  var $appid = "wx237fb313f82e673b";
-  var $appsecret = "917496aa5d1fb9df783b1f979e5dce8b";
+  var $appid ;
+  var $appsecret ;
 
-
-
-  //构造函数，获取Access Token
+  //构造函数，
   public function __construct($appid = NULL, $appsecret = NULL){
-    if($appid){
-      $this->appid = $appid;
-    }
-    if($appsecret){
-      $this->appsecret = $appsecret;
-    }
-
-    //hardcode
-    $this->lasttime = 1395049256;
-    $this->access_token = "nRZvVpDU7LxcSi7GnG2LrUcmKbAECzRf0NyDBwKlng4nMPf88d34pkzdNcvhqm4clidLGAS18cN1RTSK60p49zIZY4aO13sF-eqsCs0xjlbad-lKVskk8T7gALQ5dIrgXbQQ_TAesSasjJ210vIqTQ";
-
-    if (time() > ($this->lasttime + 7200)){
-      $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$this->appid."&secret=".$this->appsecret;
-      $res = $this->https_request($url);
-      $result = json_decode($res, true);
-      //save to Database or Memcache
-      $this->access_token = $result["access_token"];
-      $this->lasttime = time();
-    }
+    $this->appid = $appid;
+    $this->appsecret = $appsecret;
   }
 
   function is_wechat_browser() {
@@ -40,15 +21,15 @@ class WeChat {
   }
 
   //获取关注者列表
-  public function get_user_list($next_openid = NULL) {
-    $url = "https://api.weixin.qq.com/cgi-bin/user/get?access_token=".$this->access_token."&next_openid=".$next_openid;
+  public function get_user_list($access_token, $next_openid = NULL) {
+    $url = "https://api.weixin.qq.com/cgi-bin/user/get?access_token=". $access_token ."&next_openid=".$next_openid;
     $res = $this->https_request($url);
     return json_decode($res, true);
   }
 
   //获取用户基本信息
-  public function get_user_info($openid) {
-    $url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$this->access_token."&openid=".$openid."&lang=zh_CN";
+  public function get_user_info($access_token, $openid) {
+    $url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=". $access_token ."&openid=".$openid."&lang=zh_CN";
     $res = $this->https_request($url);
     return json_decode($res, true);
   }

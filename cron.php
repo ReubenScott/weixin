@@ -1,11 +1,13 @@
 <?php
 
 /**
- * wechat token cron
+ * wechat cron 获取Access Token 
  */
 
+include "settings.php" ;
 include_once('libs/WeChat.class.php');
-$wechat = new WeChat;
+
+$wechat = new WeChat($appid, $appsecret);
 $access_token = $wechat->refresh_access_token() ;
 
 $token_file = 'token.php';
